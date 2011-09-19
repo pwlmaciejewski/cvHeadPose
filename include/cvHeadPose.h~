@@ -1,0 +1,17 @@
+
+Dodaj strukturę Head Pose? Takie token... Żeby nie trzeba było
+wołać różnych funkcji, ale żeby można byłą kilka trackingów zrobić.
+
+/* cvHeadPoseHeyFrame */
+void cvHeadPoseKeyFrame(const IplImage* frame, const CvPoint2D32f faceCorners) {
+  // ...
+}
+
+/* cvHeadPose */
+void vbHeadPose(const IplImagr* frame, const CvPoint2D32f* previousFaceCorners,
+                CvPoint2D32f* faceCorners, CvPoint3D32f* translationVector,
+                float* rotationMatrix) {
+  // ...
+}
+
+
