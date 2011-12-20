@@ -1,6 +1,7 @@
 # Compiler options
 CC=gcc
 CFLAGS=-Iinclude/
+INSTALL_PATH=/usr/local
 
 all: cvhp
 
@@ -11,10 +12,14 @@ cvhp:
 samples: sample3DHeadPose sample2DHeadPose
 
 sample3DHeadPose: cvhp
-	$(CC) $(CFLAGS) samples/3DHeadPose/3DHeadPose.c -o samples/3DHeadPose/3DHeadPose -Llib -lcvhp -lGL -lGLU -lglut -lopencv_core -lopencv_highgui 	
+	$(CC) $(CFLAGS) samples/3DHeadPose/3DHeadPose.c -o samples/3DHeadPose/3DHeadPose -Llib -lcvhp -lGL -lGLU -lglut -lopencv_core -lopencv_highgui -lopencv_imgproc	
 
 sample2DHeadPose: cvhp
-	$(CC) $(CFLAGS) samples/2DHeadPose/2DHeadPose.c -o samples/2DHeadPose/2DHeadPose -Llib -lcvhp -lopencv_core -lopencv_highgui 
+	$(CC) $(CFLAGS) samples/2DHeadPose/2DHeadPose.c -o samples/2DHeadPose/2DHeadPose -Llib -lcvhp -lopencv_core -lopencv_highgui -lopencv_imgproc
+
+install:
+	cp lib/* $(INSTALL_PATH)/lib/
+	ldconfig
 
 clear: clearCvhp clearSamples	
 

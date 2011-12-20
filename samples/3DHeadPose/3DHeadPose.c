@@ -136,7 +136,7 @@ int main(int argc, char** argv) {
   
   // Initialize window and camera capture
   cvNamedWindow("3D HeadPose Demo", CV_WINDOW_AUTOSIZE);
-  camera = cvCreateCameraCapture(0);
+  camera = cvCaptureFromFile("out3.mpg");
   if (!camera) {
     perror("Cannot create camera capture\n");
     return 1;

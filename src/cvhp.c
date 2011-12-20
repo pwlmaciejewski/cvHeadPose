@@ -1,5 +1,4 @@
 #include "cvhp.h"
-#include <time.h>
 
 CvHeadPose* cvhpInit(CvHeadPoseOptions* options) {
   CvHeadPose* headPose = malloc(sizeof(CvHeadPose));

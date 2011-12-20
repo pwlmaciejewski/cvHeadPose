@@ -12,10 +12,8 @@
 // Std. lib
 #include <stdio.h>
 #include <math.h>
-#include <dlfcn.h>
 
 // Const
-#define PI 3.141592
 #define FOCAL_LENGTH 604
 
 // Global variables
@@ -24,7 +22,6 @@ int frameHeight;
 CvHeadPose* headPose;
 CvCapture* camera;
 int isHeadPoseOn = 0;
-float projectionMatrix[16];
 
 void videoLoop() {
   IplImage* frame;
@@ -54,31 +51,24 @@ void videoLoop() {
     isHeadPoseOn = 0;
   }
 
-  glutPostRedisplay();
-  
-  // Clean up
-  //cvReleaseImage(&frame);  
+  glutPostRedisplay();   
 }
 
 void renderAxis(float size)
 {
-  CvPoint3D32f faceCenter = {
-    0,
-    0,
-    0
-  };
+  CvPoint3D32f faceCenter = { 0, 0, 0 };
 
   glLineWidth(1);
   glBegin(GL_LINES);
     glColor3f(0.5, 0.5, 0.5);
-    glVertex3f(faceCenter.x - 0.5, faceCenter.y, faceCenter.z);
-    glVertex3f(faceCenter.x + 0.5, faceCenter.y, faceCenter.z);
+    glVertex3f(faceCenter.x - size, faceCenter.y, faceCenter.z);
+    glVertex3f(faceCenter.x + size, faceCenter.y, faceCenter.z);
   glEnd();
 
   glBegin(GL_LINES);
     glColor3f(0.5, 0.5, 0.5);
-    glVertex3f(faceCenter.x, faceCenter.y - 0.5, faceCenter.z);
-    glVertex3f(faceCenter.x, faceCenter.y + 0.5, faceCenter.z);
+    glVertex3f(faceCenter.x, faceCenter.y - size, faceCenter.z);
+    glVertex3f(faceCenter.x, faceCenter.y + size, faceCenter.z);
   glEnd();
 
   glLineWidth(3);
@@ -87,49 +77,6 @@ void renderAxis(float size)
     glVertex3f(faceCenter.x, faceCenter.y, faceCenter.z);
     glVertex3f(faceCenter.x, faceCenter.y, faceCenter.z + size);
   glEnd();
-
-  glLineWidth(1);
-  glColor3f(0.3, 0.3, 0.3);
-  glBegin(GL_LINES);
-    glVertex3f(faceCenter.x - 0.5, faceCenter.y - 0.5, faceCenter.z);
-    glVertex3f(faceCenter.x - 0.5, faceCenter.y + 0.5, faceCenter.z);
-
-    glVertex3f(faceCenter.x - 0.5, faceCenter.y + 0.5, faceCenter.z);
-    glVertex3f(faceCenter.x + 0.5, faceCenter.y + 0.5, faceCenter.z);
-
-    glVertex3f(faceCenter.x + 0.5, faceCenter.y + 0.5, faceCenter.z);
-    glVertex3f(faceCenter.x + 0.5, faceCenter.y - 0.5, faceCenter.z);
-
-    glVertex3f(faceCenter.x + 0.5, faceCenter.y - 0.5, faceCenter.z);
-    glVertex3f(faceCenter.x - 0.5, faceCenter.y - 0.5, faceCenter.z);
-  glEnd();
-
-}
-
-void createProjectionMatrix() {
-    float nearPlane = 1.0,
-          farPlane = 10000.0;
-
-    projectionMatrix[0] = 2 * FOCAL_LENGTH / frameWidth;
-    projectionMatrix[1] = 0.0;
-    projectionMatrix[2] = 0.0;
-    projectionMatrix[3] = 0.0;
-
-    projectionMatrix[4] = 0.0;
-    projectionMatrix[5] = 2 * FOCAL_LENGTH / frameHeight;
-    projectionMatrix[6] = 0.0;
-    projectionMatrix[7] = 0.0;
-
-    projectionMatrix[8] = 0;
-    projectionMatrix[9] = 0;
-    projectionMatrix[10] = - ( farPlane + nearPlane ) / ( farPlane - nearPlane );
-    projectionMatrix[11] = -2.0 * farPlane * nearPlane / ( farPlane - nearPlane );
-
-    projectionMatrix[12] = 0.0;
-    projectionMatrix[13] = 0.0;
-    projectionMatrix[14] = -1.0;
-    projectionMatrix[15] = 0.0;
-
 }
 
 void draw() {
@@ -146,24 +93,7 @@ void draw() {
   // Load projection matrix
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  //glLoadMatrixf(projectionMatrix);
-  gluPerspective(90.0f, (GLfloat)frameWidth / (GLfloat)frameHeight, 0.1f, 100.f);
-
-  // Camera
-  glMatrixMode(GL_MODELVIEW);
-  glLoadIdentity();
-  gluLookAt(0,0,0, 0,0,+1, 0,-1,0);
-  
-  // Draw auxiliary lines (to see depth)
-  for (i = 0; i <= 100; i += 5 ) {
-    glLineWidth(1);
-    glColor3f(0.4, 0.4, 0.4);
-    glBegin(GL_LINES);
-    glVertex3f(-5, 0, -i);
-    glVertex3f(5, 0, -i);
-    glEnd();
-  }
-
+  glFrustum(0, 1, -1, 0, 1, 10);
 
   // Construct model pose matrix
   for (i = 0; i < 16; i += 1) {
@@ -179,29 +109,14 @@ void draw() {
     pose[13] = headPose->translationVector[1];
     pose[14] = headPose->translationVector[2];
     pose[15] = 1.0;
-    
-    printf("%f \t %f \t %f \t\n", pose[0], pose[1], pose[2], pose[3]);
-    printf("%f \t %f \t %f \t\n", pose[4], pose[5], pose[6], pose[7]);
-    printf("%f \t %f \t %f \t\n", pose[8], pose[9], pose[10], pose[11]);
-    printf("%f \t %f \t %f \t\n\n", pose[12], pose[13], pose[14], pose[15]);
   }
-
   
   // Draw head pose
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity();  
-  gluLookAt(0,0,0, 0,0,+1, 0,-1,0);
+  gluLookAt(0,0,0, 0,0,+1, 0,-2,0);
   glMultMatrixf(pose);
-  renderAxis(10);
-
-  glLoadIdentity();
-  gluLookAt(0,0,0, 0,0,+1, 0,-1,0);
-  glBegin(GL_LINES);
-    glLineWidth(2);
-    glColor3f(1, 0, 0);
-    glVertex3f(3.30225, 2.38352, 4.4732);
-    glVertex3f(2.30225, 2.38352, 4.4732);
-  glEnd();
+  renderAxis(1);
   
   glutSwapBuffers();
 }
@@ -221,7 +136,7 @@ int main(int argc, char** argv) {
   
   // Initialize window and camera capture
   cvNamedWindow("3D HeadPose Demo", CV_WINDOW_AUTOSIZE);
-  camera = cvCreateCameraCapture(0);
+  camera = cvCaptureFromFile("out2.mpg");
   if (!camera) {
     perror("Cannot create camera capture\n");
     return 1;
@@ -247,9 +162,6 @@ int main(int argc, char** argv) {
   glutCreateWindow("3D Head Pose Demo");
   glutDisplayFunc(draw);
   glutReshapeFunc(reshape);
-
-  // Create projection matrix
-  createProjectionMatrix();
   
   // Main loop
   glutMainLoop();
