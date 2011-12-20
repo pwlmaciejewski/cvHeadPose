@@ -3,11 +3,14 @@
 OpenCV function for 6DOF head pose tracking
 
 ## Dependencies
+
 To compile libcvhp:
+
  * gcc >= 4.4.5
  * OpenCV >= 2.3
 
 To compile samples:
+
  * OpenGL
  * GLUT (freeglut3 >= 2.6.0)
 
