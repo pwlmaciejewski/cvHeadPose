@@ -18,9 +18,9 @@ To compile samples:
 
 CvHeadPose builds as shared object. Just type:
 
- $ make
+	$ make
 
- $ sudo make install 
+	$ sudo make install 
 
 ##  Samples
 
