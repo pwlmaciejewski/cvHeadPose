@@ -18,9 +18,9 @@ To compile samples:
 
 CvHeadPose builds as shared object. Just type:
 
-  $ make
-  $ sudo make install 
+ $ make
 
+ $ sudo make install 
 
 ##  Samples
 
@@ -30,12 +30,16 @@ OpenGL and libGLUT developement files, and OpenCV
 build with GTK support.
 
 To build all samples type:
-  $ make samples
+
+ $ make samples
 
 You can always build specific sample:
-  $ make SAMPLE_NAME
+  
+ $ make SAMPLE_NAME
+
 e.g.: 
-  $ make 2DHeadPose
+  
+ $ make 2DHeadPose
 
 You can see available samples in samples/ directory
 
