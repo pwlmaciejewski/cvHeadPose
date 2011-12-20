@@ -1,6 +1,0 @@
-#include "cvHeadPose.h"
-#include <stdio.h>
-
-CvHeadPose cvHeadPose(cont IplImage* frame, CvHeadPose headPose) {
-  
-}
